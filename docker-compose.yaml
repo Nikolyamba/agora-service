@@ -1,0 +1,22 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env #TODO Я ПЕРЕИМЕНУЮ ЕЩО
+    depends_on:
+      - db
+    restart: always
+    volumes:
+      - .:/app
+
+  db:
+    image: postgres:17
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: 12345678qwe
+      POSTGRES_USER: user_123
+      POSTGRES_DB: agoraTest
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
