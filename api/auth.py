@@ -1,9 +1,11 @@
 from fastapi import APIRouter, Header, HTTPException
 from starlette.requests import Request
+from services.limiter import limiter
 
 a_router = APIRouter(prefix='/auth') #a as auth
 
 @a_router.post('/simple')
+@limiter.limit("5/minute")
 async def auth(request: Request, x_user_id: str = Header(..., alias="X-User-Id")) -> dict:
     if not x_user_id:
         raise HTTPException(status_code=401, detail='Header не был передан!')
