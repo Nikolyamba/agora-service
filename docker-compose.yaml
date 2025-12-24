@@ -8,8 +8,6 @@ services:
     depends_on:
       - db
     restart: always
-    volumes:
-      - .:/app
 
   db:
     image: postgres:17
