@@ -9,6 +9,7 @@ from api.auth import a_router
 from api.rooms import r_router
 from api.tokens import t_router
 from services.limiter import limiter
+from services.log import setup_logger
 
 app = FastAPI()
 
@@ -19,6 +20,10 @@ app.include_router(r_router, prefix='/api')
 app.state.limiter = limiter
 app.add_middleware(SlowAPIMiddleware)
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+logger = setup_logger()
+
+logger.info("Запуск приложения")
 
 @app.get("/health")
 @limiter.limit("5/minute")

@@ -10,16 +10,22 @@ from services.limiter import limiter
 from models.token_log_model import TokenLog
 from schemas.tokens_schema import RTCTokenRequest, RTMTokenRequest
 from services.agora_service import AgoraService
+from services.log import setup_logger
 
 t_router = APIRouter(prefix='/tokens')
 
 agora_service = AgoraService()
 TOKEN_TTL = 3600
 
+logger = setup_logger()
+
 @t_router.post("/rtc") #можно было бы использовать response_model = но решил обойтись без этого
 @limiter.limit("5/minute")
 async def generate_rtc_token(request: Request, data: RTCTokenRequest, db: AsyncSession = Depends(get_db),
                              user_id: str = Depends(get_current_user)) -> dict:
+
+    logger.info(f"Запрос РТС Токена | user={user_id} channel={data.channel}")
+
     token = agora_service.generate_rtc_token(
         channel_name=data.channel,
         uid=data.uid,
@@ -42,6 +48,9 @@ async def generate_rtc_token(request: Request, data: RTCTokenRequest, db: AsyncS
 @limiter.limit("5/minute")
 async def generate_rtm_token(request: Request, data: RTMTokenRequest, db: AsyncSession = Depends(get_db),
                              user_id: str = Depends(get_current_user)):
+
+    logger.info(f"Запрос РТМ Токена | user={user_id}")
+
     token = agora_service.generate_rtm_token(uid=data.uid)
     db.add(TokenLog(
         user_id=user_id,
