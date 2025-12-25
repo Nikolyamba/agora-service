@@ -4,7 +4,7 @@ services:
     ports:
       - "8000:8000"
     env_file:
-      - .env #TODO Я ПЕРЕИМЕНУЮ ЕЩО
+      - .env
     depends_on:
       - db
     restart: always
@@ -18,3 +18,6 @@ services:
       POSTGRES_DB: agoraTest
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
